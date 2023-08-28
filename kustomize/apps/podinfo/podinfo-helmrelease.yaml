@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: podinfo
+  namespace: podinfo
+spec:
+  chart:
+    spec:
+      chart: podinfo
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: podinfo
+      version: 1.5.29
+  interval: 1m0s
+  releaseName: podinfo
+  values:
+    canary:
+      enabled: true
+      ingress:
+        url: istio-gateway.istio-system:80
+      loadtester:
+        url: flagger-loadtester.istio-system:80
+    replicaCount: 2
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+    service:
+      enabled: false
+      externalPort: 80
+
